@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'ai.dart';
 import 'code.dart';
 import 'code_parser.dart';
@@ -85,9 +87,18 @@ class GS1BarcodeParser {
     final elements = <String, GS1ParsedElement>{};
 
     while (restOfBarcode.isNotEmpty) {
-      final res = _identifyAI(restOfBarcode);
-      elements.putIfAbsent(res.element.aiCode, () => res.element);
-      restOfBarcode = res.rest;
+      try {
+        final res = _identifyAI(restOfBarcode);
+        elements.putIfAbsent(res.element.aiCode, () => res.element);
+        restOfBarcode = res.rest;
+      } on Object catch (error, trace) {
+        log(
+          'Error while parsing',
+          error: error,
+          stackTrace: trace,
+        );
+        break;
+      }
     }
 
     return GS1Barcode(
