@@ -233,6 +233,7 @@ class GS1Barcode {
         (String previousValue, element) =>
             previousValue +
             '${element.key} (${AI.AIS[element.key]!.dataTitle}): ${element.value.data},\n');
-    return 'code = ${code.codeTitle},\ndata = {\n$elem}';
+    return 'code = ${code.codeTitle},\ndata = {\n$elem}'
+        '${error != null ? ',\nerror = $error' : ''}';
   }
 }
