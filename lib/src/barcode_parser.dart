@@ -86,12 +86,14 @@ class GS1BarcodeParser {
 
     final elements = <String, GS1ParsedElement>{};
 
+    Object? parseError;
     while (restOfBarcode.isNotEmpty) {
       try {
         final res = _identifyAI(restOfBarcode);
         elements.putIfAbsent(res.element.aiCode, () => res.element);
         restOfBarcode = res.rest;
       } on Object catch (error, trace) {
+        parseError = error;
         log(
           'Error while parsing',
           error: error,
@@ -104,6 +106,7 @@ class GS1BarcodeParser {
     return GS1Barcode(
       code: codeWithRest.code,
       elements: elements,
+      error: parseError,
     );
   }
 
@@ -177,12 +180,15 @@ class GS1Barcode {
   /// Barcode description
   final Code code;
 
+  final Object? error;
+
   /// Map of parsed AI elements. Key - AI string, value - parsed element
   final Map<String, GS1ParsedElement> elements;
 
   const GS1Barcode({
     required this.code,
     required this.elements,
+    this.error,
   });
 
   /// Get available AIs
